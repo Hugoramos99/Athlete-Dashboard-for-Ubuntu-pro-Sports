@@ -301,33 +301,5 @@ else:
             st.write("No sleep quality data available.")
 
 
-    # Add a section for key insights
-    st.markdown("<h2 class='section-title'>Key Insights</h2>", unsafe_allow_html=True)
-
-    if st.button('Find out key insights', key='insights_button'):
-        insights = []
-        if overall_satisfaction < 60:
-            insights.append("The player's overall game feeling is below 60%. Focus on improving game strategies and providing additional support.")
-        
-        if physical_satisfaction < 60:
-            insights.append("The player's physical feeling is below 60%. Pay attention to their physical training and recovery routines.")
-        
-        # Check for recent injuries
-        if 'Injuries' in athlete_data.columns:
-            recent_injuries = athlete_data[athlete_data['Injuries'].notnull()]
-            if not recent_injuries.empty:
-                major_injury = recent_injuries[recent_injuries['Injuries'].str.contains('Major', case=False)]
-                minor_injury = recent_injuries[recent_injuries['Injuries'].str.contains('Minor', case=False)]
-                if not major_injury.empty:
-                    insights.append("Recent injury recorded: Major. Ensure proper medical attention and recovery plans are in place.")
-                elif not minor_injury.empty:
-                    insights.append("Recent injury recorded: Minor. Ensure proper medical attention and recovery plans are in place.")
-        
-        if not insights:
-            st.write("The player is in great shape!!")
-        else:
-            for insight in insights:
-                st.write("- " + insight)
-
         
         
