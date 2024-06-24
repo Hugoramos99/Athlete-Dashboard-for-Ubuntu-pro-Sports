@@ -232,31 +232,6 @@ else:
     else:
         st.write("No satisfaction data available.")
     
-    st.markdown("<h2 class='section-title'>Key Insights</h2>", unsafe_allow_html=True)
-    
-    if st.button('Find out key insights', key='insights_button'):
-        insights = []
-        if overall_satisfaction < 60:
-            insights.append("The player's overall game feeling is below 60%. Focus on improving game strategies and providing additional support.")
-    
-        if physical_satisfaction < 60:
-            insights.append("The player's physical feeling is below 60%. Pay attention to their physical training and recovery routines.")
-    
-        # Check for recent injuries
-        if 'Injuries' in athlete_data.columns:
-            recent_injuries = athlete_data[athlete_data['Injuries'].notnull()]
-            if not recent_injuries.empty:
-                for injury in recent_injuries['Injuries'].unique():
-                    if 'Major' in injury:
-                        insights.append(f"Recent injury recorded: Major - {injury}. Ensure proper medical attention and recovery plans are in place.")
-                    elif 'Minor' in injury:
-                        insights.append(f"Recent injury recorded: Minor - {injury}. Ensure proper medical attention and recovery plans are in place.")
-    
-        if insights:
-            for insight in insights:
-                st.write("- " + insight)
-        else:
-            st.write("The player is in great shape!!")
     
     col5, col6 = st.columns(2)
     
@@ -299,7 +274,32 @@ else:
             st.plotly_chart(fig_sleep)
         else:
             st.write("No sleep quality data available.")
-
-
-        
-        
+            
+        # Key Insights Section at the end of the page
+    st.markdown("<h2 class='section-title'>Key Insights</h2>", unsafe_allow_html=True)
+    
+    if st.button('Find out key insights', key='insights_button'):
+        insights = []
+        if overall_satisfaction < 60:
+            insights.append("The player's overall game feeling is below 60%. Focus on improving game strategies and providing additional support.")
+    
+        if physical_satisfaction < 60:
+            insights.append("The player's physical feeling is below 60%. Pay attention to their physical training and recovery routines.")
+    
+        # Check for recent injuries
+        if 'Injuries' in athlete_data.columns:
+            recent_injuries = athlete_data[athlete_data['Injuries'].notnull()]
+            if not recent_injuries.empty:
+                for injury in recent_injuries['Injuries'].unique():
+                    if 'Major' in injury:
+                        insights.append(f"Recent injury recorded: Major - {injury}. Ensure proper medical attention and recovery plans are in place.")
+                    elif 'Minor' in injury:
+                        insights.append(f"Recent injury recorded: Minor - {injury}. Ensure proper medical attention and recovery plans are in place.")
+    
+        if insights:
+            for insight in insights:
+                st.write("- " + insight)
+        else:
+            st.write("The player is in great shape!!")
+            
+            
