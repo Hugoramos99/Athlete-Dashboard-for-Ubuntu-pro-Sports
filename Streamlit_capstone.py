@@ -183,7 +183,7 @@ else:
     else:
         st.write("No game performance data available.")
     
-    # Key Takeaways
+        # Key Takeaways
     st.markdown("<h2 class='section-title'>Key Takeaways</h2>", unsafe_allow_html=True)
     
     if not athlete_data['Date'].isnull().all():
@@ -194,10 +194,10 @@ else:
     
         with col3:
             fig1 = go.Figure(go.Indicator(
-                mode = "gauge+number+delta",
-                value = overall_satisfaction,
-                title = {'text': "Overall Average Satisfaction"},
-                gauge = {
+                mode="gauge+number+delta",
+                value=overall_satisfaction,
+                title={'text': "Overall Average Satisfaction"},
+                gauge={
                     'axis': {'range': [None, 100]},
                     'bar': {'color': "darkblue"},
                     'steps': [
@@ -213,10 +213,10 @@ else:
     
         with col4:
             fig2 = go.Figure(go.Indicator(
-                mode = "gauge+number+delta",
-                value = physical_satisfaction,
-                title = {'text': "Physical Average Satisfaction"},
-                gauge = {
+                mode="gauge+number+delta",
+                value=physical_satisfaction,
+                title={'text': "Physical Average Satisfaction"},
+                gauge={
                     'axis': {'range': [None, 100]},
                     'bar': {'color': "darkblue"},
                     'steps': [
@@ -232,19 +232,47 @@ else:
     else:
         st.write("No satisfaction data available.")
     
+    st.markdown("<h2 class='section-title'>Key Insights</h2>", unsafe_allow_html=True)
+    
+    if st.button('Find out key insights', key='insights_button'):
+        insights = []
+        if overall_satisfaction < 60:
+            insights.append("The player's overall game feeling is below 60%. Focus on improving game strategies and providing additional support.")
+    
+        if physical_satisfaction < 60:
+            insights.append("The player's physical feeling is below 60%. Pay attention to their physical training and recovery routines.")
+    
+        # Check for recent injuries
+        if 'Injuries' in athlete_data.columns:
+            recent_injuries = athlete_data[athlete_data['Injuries'].notnull()]
+            if not recent_injuries.empty:
+                for injury in recent_injuries['Injuries'].unique():
+                    if 'Major' in injury:
+                        insights.append(f"Recent injury recorded: Major - {injury}. Ensure proper medical attention and recovery plans are in place.")
+                    elif 'Minor' in injury:
+                        insights.append(f"Recent injury recorded: Minor - {injury}. Ensure proper medical attention and recovery plans are in place.")
+    
+        if insights:
+            for insight in insights:
+                st.write("- " + insight)
+        else:
+            st.write("The player is in great shape!!")
+    
     col5, col6 = st.columns(2)
-
+    
     with col5:
         # Monthly Average Exertion Levels (Training vs. Game)
         if not athlete_data['Date'].isnull().all():
-            monthly_avg = athlete_data.resample('M', on='Date').mean()
+            numeric_cols = ['Exertion Training', 'Exertion Games']
+            athlete_data[numeric_cols] = athlete_data[numeric_cols].apply(pd.to_numeric, errors='coerce')
+            monthly_avg = athlete_data.resample('M', on='Date')[numeric_cols].mean()
             st.write("Monthly average exertion levels (Training vs. Game) - debug:")
-            st.write(monthly_avg[['Exertion Training', 'Exertion Games']])
+            st.write(monthly_avg)
             
             fig_exertion = px.bar(
                 athlete_data,
                 x='Date',
-                y=['Exertion Training', 'Exertion Games'],
+                y=numeric_cols,
                 labels={'value': 'Exertion Level', 'Date': 'Date'},
                 title='Exertion Levels (Training vs. Game)',
                 barmode='group'
@@ -252,13 +280,14 @@ else:
             st.plotly_chart(fig_exertion)
         else:
             st.write("No exertion data available.")
-
+    
     with col6:
         # Monthly Average Sleep Quality
         if not athlete_data['Date'].isnull().all():
-            monthly_avg = athlete_data.resample('M', on='Date').mean()
+            athlete_data['Sleep Quality'] = pd.to_numeric(athlete_data['Sleep Quality'], errors='coerce')
+            monthly_avg = athlete_data.resample('M', on='Date')['Sleep Quality'].mean()
             st.write("Monthly average sleep quality - debug:")
-            st.write(monthly_avg['Sleep Quality'])
+            st.write(monthly_avg)
             
             fig_sleep = px.bar(
                 athlete_data,
@@ -270,6 +299,7 @@ else:
             st.plotly_chart(fig_sleep)
         else:
             st.write("No sleep quality data available.")
+
 
     # Add a section for key insights
     st.markdown("<h2 class='section-title'>Key Insights</h2>", unsafe_allow_html=True)
