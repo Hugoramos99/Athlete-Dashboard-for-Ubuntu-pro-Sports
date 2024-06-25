@@ -275,6 +275,28 @@ else:
         else:
             st.write("No sleep quality data available.")
             
+                
+            # Function to handle comments
+    def handle_comments(athlete_name):
+        comments_key = f"comments_{athlete_name.replace(' ', '_')}"
+    
+        if comments_key not in st.session_state:
+            st.session_state[comments_key] = ""
+    
+        comments_input = st.text_area("Comments", value=st.session_state[comments_key], key=f"textarea_{comments_key}")
+    
+        if st.button("Save Notes", key=f"save_{comments_key}"):
+            st.session_state[comments_key] = comments_input
+            st.success("Notes saved!")
+    
+        if st.button("Reset Notes", key=f"reset_{comments_key}"):
+            st.session_state[comments_key] = ""
+            st.success("Notes reset!")
+
+    # Display comments section
+    st.markdown("<h2 class='section-title'>Comments</h2>", unsafe_allow_html=True)
+    handle_comments(athlete_name)
+            
         # Key Insights Section at the end of the page
     st.markdown("<h2 class='section-title'>Key Insights</h2>", unsafe_allow_html=True)
     
