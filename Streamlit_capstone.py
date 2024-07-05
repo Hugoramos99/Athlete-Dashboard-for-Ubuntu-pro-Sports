@@ -80,9 +80,6 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-logo = Image.open('ubuntu_logo.webp')
-logo = logo.resize((100, 100))
-st.sidebar.image(logo, use_column_width=True)
 st.sidebar.title("Ubuntu Pro Sports Dashboard")
 
 athlete_name = st.sidebar.selectbox('Select an athlete:', [''] + list(merged_data['full_name'].unique()))
@@ -232,51 +229,7 @@ else:
     else:
         st.write("No satisfaction data available.")
     
-    
-    col5, col6 = st.columns(2)
-    
-    with col5:
-        # Monthly Average Exertion Levels (Training vs. Game)
-        if not athlete_data['Date'].isnull().all():
-            numeric_cols = ['Exertion Training', 'Exertion Games']
-            athlete_data[numeric_cols] = athlete_data[numeric_cols].apply(pd.to_numeric, errors='coerce')
-            monthly_avg = athlete_data.resample('M', on='Date')[numeric_cols].mean()
-            st.write("Monthly average exertion levels (Training vs. Game) - debug:")
-            st.write(monthly_avg)
-            
-            fig_exertion = px.bar(
-                athlete_data,
-                x='Date',
-                y=numeric_cols,
-                labels={'value': 'Exertion Level', 'Date': 'Date'},
-                title='Exertion Levels (Training vs. Game)',
-                barmode='group'
-            )
-            st.plotly_chart(fig_exertion)
-        else:
-            st.write("No exertion data available.")
-    
-    with col6:
-        # Monthly Average Sleep Quality
-        if not athlete_data['Date'].isnull().all():
-            athlete_data['Sleep Quality'] = pd.to_numeric(athlete_data['Sleep Quality'], errors='coerce')
-            monthly_avg = athlete_data.resample('M', on='Date')['Sleep Quality'].mean()
-            st.write("Monthly average sleep quality - debug:")
-            st.write(monthly_avg)
-            
-            fig_sleep = px.bar(
-                athlete_data,
-                x='Date',
-                y='Sleep Quality',
-                labels={'Sleep Quality': 'Sleep Quality', 'Date': 'Date'},
-                title='Sleep Quality Over Time'
-            )
-            st.plotly_chart(fig_sleep)
-        else:
-            st.write("No sleep quality data available.")
-            
-                
-            # Function to handle comments
+    # Function to handle comments
     def handle_comments(athlete_name):
         comments_key = f"comments_{athlete_name.replace(' ', '_')}"
     
@@ -297,7 +250,7 @@ else:
     st.markdown("<h2 class='section-title'>Comments</h2>", unsafe_allow_html=True)
     handle_comments(athlete_name)
             
-        # Key Insights Section at the end of the page
+    # Key Insights Section at the end of the page
     st.markdown("<h2 class='section-title'>Key Insights</h2>", unsafe_allow_html=True)
     
     if st.button('Find out key insights', key='insights_button'):
@@ -323,5 +276,5 @@ else:
                 st.write("- " + insight)
         else:
             st.write("The player is in great shape!!")
-            
+
             
