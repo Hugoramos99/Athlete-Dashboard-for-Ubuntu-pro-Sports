@@ -229,6 +229,44 @@ else:
     else:
         st.write("No satisfaction data available.")
     
+    col5, col6 = st.columns(2)
+    
+    with col5:
+        # Monthly Average Exertion Levels (Training vs. Game)
+        if not athlete_data['Date'].isnull().all():
+            numeric_cols = ['Exertion Training', 'Exertion Games']
+            athlete_data[numeric_cols] = athlete_data[numeric_cols].apply(pd.to_numeric, errors='coerce')
+            monthly_avg = athlete_data.resample('M', on='Date')[numeric_cols].mean()
+            
+            fig_exertion = px.bar(
+                monthly_avg.reset_index(),
+                x='Date',
+                y=numeric_cols,
+                labels={'value': 'Exertion Level', 'Date': 'Date'},
+                title='Exertion Levels (Training vs. Game)',
+                barmode='group'
+            )
+            st.plotly_chart(fig_exertion)
+        else:
+            st.write("No exertion data available.")
+    
+    with col6:
+        # Monthly Average Sleep Quality
+        if not athlete_data['Date'].isnull().all():
+            athlete_data['Sleep Quality'] = pd.to_numeric(athlete_data['Sleep Quality'], errors='coerce')
+            monthly_avg = athlete_data.resample('M', on='Date')['Sleep Quality'].mean()
+            
+            fig_sleep = px.bar(
+                monthly_avg.reset_index(),
+                x='Date',
+                y='Sleep Quality',
+                labels={'Sleep Quality': 'Sleep Quality', 'Date': 'Date'},
+                title='Sleep Quality Over Time'
+            )
+            st.plotly_chart(fig_sleep)
+        else:
+            st.write("No sleep quality data available.")
+            
     # Function to handle comments
     def handle_comments(athlete_name):
         comments_key = f"comments_{athlete_name.replace(' ', '_')}"
@@ -276,5 +314,6 @@ else:
                 st.write("- " + insight)
         else:
             st.write("The player is in great shape!!")
+
 
             
